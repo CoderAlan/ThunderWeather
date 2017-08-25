@@ -1,6 +1,7 @@
 package com.example.alan.thunderweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.bumptech.glide.util.Util;
 import com.example.alan.thunderweather.db.City;
 import com.example.alan.thunderweather.db.County;
 import com.example.alan.thunderweather.db.Province;
+import com.example.alan.thunderweather.gson.Weather;
 import com.example.alan.thunderweather.util.HttpUtil;
 import com.example.alan.thunderweather.util.Utility;
 
@@ -106,6 +108,24 @@ public class ChooseAreaFragment extends Fragment {
                 {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }
+                else if(currentLevel==LEVEL_COUNTY)
+                {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    if(getActivity() instanceof  MainActivity)
+                    {
+                        Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                    else if (getActivity() instanceof WeatherActivity)
+                    {
+                        WeatherActivity activity = (WeatherActivity)getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefresh.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+                    }
                 }
             }
         });
